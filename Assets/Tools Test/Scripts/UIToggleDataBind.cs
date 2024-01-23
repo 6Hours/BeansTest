@@ -84,16 +84,14 @@ namespace AxGrid.Tools.Binders
 			Model.EventManager.RemoveAction($"On{activeField}Changed", OnItemActiveChange);
 		}
 
-		public void OnClick(bool active) => OnClick();
-
-		public void OnClick()
+		public void OnClick(bool active)
 		{
 			if (!toggle.interactable || !isActiveAndEnabled)
 				return;
 
 			Model?.EventManager.Invoke("SoundPlay", "Click");
 
-			Model?.Set(activeField, toggle.isOn);
+			Model?.Set(activeField, active);
 
 			Settings.Fsm?.Invoke("OnToggle", toggleName);
 
