@@ -36,30 +36,9 @@ namespace AxGrid.Tools.Binders
 		public bool defaultActive = true;
 
 		/// <summary>
-		/// Поле из модели где взять настройку клавиатуры
-		/// </summary>
-		public string keyField = "";
-
-		/// <summary>
-		/// Кнопка клавиатуры (заполнится из модели если там есть)
-		/// </summary>
-		public string key = "";
-
-		/// <summary>
-		/// Срабатывать на нажатие
-		/// </summary>
-		public bool onKeyPress = false;
-
-		/// <summary>
 		/// Отправляет события во вспомогательную UI fsm
 		/// </summary>
 		public bool isFsmUI = false;
-
-		private bool down = false;
-		private float downTime = 0.0f;
-		private bool cancel = false;
-
-		private EventTrigger et;
 
 		[OnAwake]
 		public void awake()
@@ -70,15 +49,8 @@ namespace AxGrid.Tools.Binders
 
 			enableField = enableField == "" ? $"Toggle{toggleName}Enable" : enableField;
 			activeField = activeField == "" ? $"Toggle{toggleName}Active" : activeField;
-			if (!onKeyPress)
-				toggle.onValueChanged.AddListener(OnClick);
-			else
-			{
-				et = gameObject.AddComponent<EventTrigger>();
-				var entry = new EventTrigger.Entry { eventID = EventTriggerType.PointerDown };
-				entry.callback.AddListener(OnClick);
-				et.triggers.Add(entry);
-			}
+
+			toggle.onValueChanged.AddListener(OnClick);
 		}
 
 		[OnStart]
@@ -86,27 +58,10 @@ namespace AxGrid.Tools.Binders
 		{
 			Model.EventManager.AddAction($"On{enableField}Changed", OnItemEnable);
 			Model.EventManager.AddAction($"On{activeField}Changed", OnItemActiveChange);
-			if (keyField == "")
-				keyField = $"{name}Key";
-			if (keyField != "")
-			{
-				key = Model.GetString(keyField, key);
-				Model.EventManager.AddAction($"On{keyField}Changed", OnKeyChanged);
-			}
+
 			OnItemEnable();
 			OnItemActiveChange();
 		}
-
-		public void OnKeyChanged()
-		{
-			key = Model.GetString(keyField);
-		}
-
-		public void CancelClick()
-		{
-			cancel = !onKeyPress;
-		}
-
 
 		public void OnItemEnable()
 		{
@@ -124,22 +79,9 @@ namespace AxGrid.Tools.Binders
 		public void onDestroy()
 		{
 			toggle.onValueChanged.RemoveAllListeners();
-			if (et != null)
-			{
-				et.triggers.ForEach(t => t.callback.RemoveAllListeners());
-				et.triggers.Clear();
-			}
+
 			Model.EventManager.RemoveAction($"On{enableField}Changed", OnItemEnable);
 			Model.EventManager.RemoveAction($"On{activeField}Changed", OnItemActiveChange);
-			Model.EventManager.RemoveAction($"On{keyField}Changed", OnKeyChanged);
-		}
-
-		private void OnClick(BaseEventData bd)
-		{
-			Log.Debug("CLICK!");
-			if (!cancel)
-				OnClick();
-			cancel = false;
 		}
 
 		public void OnClick(bool active) => OnClick();
@@ -149,57 +91,13 @@ namespace AxGrid.Tools.Binders
 			if (!toggle.interactable || !isActiveAndEnabled)
 				return;
 
-			if (!cancel)
-			{
-				Model?.EventManager.Invoke("SoundPlay", "Click");
+			Model?.EventManager.Invoke("SoundPlay", "Click");
 
-				Model?.Set(activeField, toggle.isOn);
+			Model?.Set(activeField, toggle.isOn);
 
-				Settings.Fsm?.Invoke("OnToggle", toggleName);
+			Settings.Fsm?.Invoke("OnToggle", toggleName);
 
-				Model?.EventManager.Invoke($"On{toggleName}Click");
-			}
-			cancel = false;
-		}
-
-
-		[OnUpdate]
-		protected void update()
-		{
-			if (!toggle.interactable || key == "")
-				return;
-
-			if (onKeyPress && !down && Input.GetKeyDown(key))
-			{
-				if (onKeyPress)
-					OnClick();
-
-				if (!down)
-				{
-					down = true;
-					downTime = 0;
-				}
-			}
-			if (!onKeyPress && Input.GetKeyUp(key)) Log.Info($"Key:{key} / D:{down} / C:{cancel}");
-			if (!onKeyPress && Input.GetKeyUp(key))
-			{
-				OnClick();
-				down = true;
-			}
-
-			if (Input.GetKeyUp(key))
-			{
-				cancel = false;
-				down = false;
-			}
-
-			if (down)
-				downTime += Time.deltaTime;
-			if (downTime >= 2f)
-			{
-				down = false;
-				cancel = false;
-			}
+			Model?.EventManager.Invoke($"On{toggleName}Click");
 		}
 	}
 }
