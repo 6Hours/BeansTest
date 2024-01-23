@@ -116,8 +116,8 @@ namespace AxGrid.Tools.Binders
 
 		public void OnItemActiveChange()
 		{
-			if (toggle.interactable != Model.GetBool(activeField, defaultActive))
-				toggle.interactable = Model.GetBool(activeField, defaultActive);
+			if (toggle.isOn != Model.GetBool(activeField, defaultActive))
+				toggle.SetIsOnWithoutNotify(Model.GetBool(activeField, defaultActive));
 		}
 
 		[OnDestroy]
