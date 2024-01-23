@@ -20,10 +20,6 @@ namespace ToolsTest
         private void ExitThis()
         {
             Log.Debug($"{Parent.CurrentStateName} EXIT");
-
-            Model.Set("StartEnabled", false);
-
-            Model.EventManager.Invoke("OnStartEnabledChanged");
         }
 
         [Bind]
