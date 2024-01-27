@@ -8,34 +8,28 @@ using UnityEngine.UI;
 
 namespace Task2
 {
-    public class CardItem : MonoBehaviourExt
+    public class CardItem : MonoBehaviourExt, IPointerClickHandler
     {
         [SerializeField] private TMP_Text nameLable;
 
         public Card Card { get; private set; }
 
-        private Button button;
+        private Image image;
 
-        private RectTransform rectTransform;
-
-        public RectTransform RectTransform
+        private Image Image
         {
             get
             {
-                if(rectTransform == null)
-                    rectTransform = GetComponent<RectTransform>();
+                if (image == null)
+                {
+                    image = GetComponent<Image>();
+                }
 
-                return rectTransform;
+                return image;
             }
         }
 
-        [OnAwake]
-        public void awake()
-        {
-            button = GetComponent<Button>();
-
-            button.onClick.AddListener(OnClick);
-        }
+        public RectTransform RectTransform => Image.rectTransform;
 
         public void SetCardModel(Card _card)
         {
@@ -52,12 +46,12 @@ namespace Task2
                 0.2f, 0f, 1f, (f) => RectTransform.anchoredPosition = Vector2.Lerp(startPosition, _position, f));
         }
 
-        public void SetButtonInteractable(bool interactable)
+        public void SetCardInteractable(bool interactable)
         {
-            button.interactable = interactable;
+            image.raycastTarget = interactable;
         }
 
-        private void OnClick()
+        public void OnPointerClick(PointerEventData eventData)
         {
             Settings.Fsm?.Invoke("OnCardBtn", Card);
         }

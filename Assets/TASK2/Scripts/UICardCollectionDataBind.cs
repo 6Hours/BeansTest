@@ -89,7 +89,7 @@ namespace Task2
 
 		private void ChangeCardInteractable(Card card, bool interactable)
         {
-			cardItems.FirstOrDefault(item => item.Card == card)?.SetButtonInteractable(interactable);
+			cardItems.FirstOrDefault(item => item.Card == card)?.SetCardInteractable(interactable);
 		}
 	}
 }
