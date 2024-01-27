@@ -44,19 +44,21 @@ namespace Task2
 				if (i == cardItems.Count)
 				{
 					cardItems.Add(FindInPoolOrCreate(dataList[i]));
-					cardItems[i].transform.parent = transform;
-
+					cardItems[i].RectTransform.SetParent(transform);
 				}
-				else if(!dataList.Contains(cardItems[i].Card))
+
+				if (dataList.Contains(cardItems[i].Card))
+                {
+					cardItems[i].MoveToPosition(
+						Vector2.right * (startPoint + i * prefab.RectTransform.sizeDelta.x * 0.8f) +
+						Vector2.down * 20f * (i % 2));
+				}
+				else
                 {
 					pool.Add(cardItems[i]);
 					cardItems.RemoveAt(i);
 					i--;
                 }
-
-				cardItems[i].MoveToPosition(
-					Vector2.right * (startPoint + i * prefab.RectTransform.sizeDelta.x * 0.8f) + 
-					Vector2.down * 20f * (i % 2));
 			}
         }
 
@@ -73,7 +75,7 @@ namespace Task2
 			var cardItem = pool.FirstOrDefault(item => item.Card == card);
 			if(cardItem == null)
             {
-				cardItem = Instantiate(prefab, transform);
+				cardItem = Instantiate(prefab);
 				cardItem.SetCardModel(card);
 				return cardItem;
 			}
