@@ -1,6 +1,7 @@
 using AxGrid;
 using AxGrid.FSM;
 using AxGrid.Model;
+using System.Collections.Generic;
 
 namespace Task2
 {
@@ -13,8 +14,9 @@ namespace Task2
             Log.Debug($"{Parent.CurrentStateName} ENTER");
 
             Model.Set("CardCount", 0);
-            Model.Set("FirstList", new DynamicList<Card>());
-            Model.Set("SecondList", new DynamicList<Card>());
+
+            Model.Set("FirstList", new List<Card>());
+            Model.Set("SecondList", new List<Card>());
 
             Parent.Change("Idle");
         }
@@ -23,12 +25,6 @@ namespace Task2
         private void ExitThis()
         {
             Log.Debug($"{Parent.CurrentStateName} EXIT");
-        }
-
-        [Bind]
-        private void OnToggle(string toggleName)
-        {
-            Model.Set("RedSquare", Model.GetBool("AgreePrivacy"));
         }
     }
 }

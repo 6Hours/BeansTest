@@ -1,6 +1,7 @@
 using AxGrid;
 using AxGrid.FSM;
 using AxGrid.Model;
+using System.Collections.Generic;
 
 namespace Task2
 {
@@ -14,7 +15,7 @@ namespace Task2
 
             int currentId = Model.Get("CardCount", 0);
 
-            Model.Get<DynamicList<Card>>("FirstList").Add(new Card(currentId, $"cardName{currentId}", $"sprite{currentId}"));
+            Model.GetList<Card>("FirstList").Add(new Card(currentId, $"cardName{currentId}", $"sprite{currentId}"));
             
             Model.Inc("CardCount", 1);
 

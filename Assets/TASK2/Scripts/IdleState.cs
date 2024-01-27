@@ -1,6 +1,7 @@
 using AxGrid;
 using AxGrid.FSM;
 using AxGrid.Model;
+using System.Collections.Generic;
 
 namespace Task2
 {
@@ -29,12 +30,12 @@ namespace Task2
         }
 
         [Bind]
-        private void OnCardBtn(CardItem cardItem)
+        private void OnCardBtn(Card card)
         {
-            Model.EventManager.Invoke("MoveCard", cardItem);
+            Model.Get<List<Card>>("FirstList").Remove(card);
+            Model.Get<List<Card>>("SecondList").Add(card);
 
-            Model.Get<DynamicList<Card>>("FirstList").Remove(cardItem.Card);
-            Model.Get<DynamicList<Card>>("SecondList").Add(cardItem.Card);
+            Model.EventManager.Invoke("ModelChanged");
         }
     }
 }

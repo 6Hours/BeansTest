@@ -43,7 +43,7 @@ namespace Task2
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            Settings.Fsm?.Invoke("OnCardButton", this);
+            Settings.Fsm?.Invoke("OnCardBtn", Card);
         }
     }
 }

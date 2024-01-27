@@ -2,6 +2,7 @@ using AxGrid;
 using AxGrid.Base;
 using AxGrid.Model;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -31,50 +32,53 @@ namespace Task2
 		public void start()
 		{
 			Model.EventManager.AddAction("ModelChanged", Changed);
-			Model.EventManager.AddAction<CardItem>("MoveCard", MoveCard);
 		}
 
-		public void Changed()
-        {
+		protected virtual void Changed()
+		{
 			var dataList = Model.Get<List<Card>>(listField);
 
 			if (dataList == null) return;
 
-			float startPoint = (dataList.Count - 1) * prefab.RectTransform.sizeDelta.x * 0.4f;
+			float startPoint = (dataList.Count - 1) * prefab.RectTransform.sizeDelta.x * -0.4f;
 			for (int i = 0; i < dataList.Count; i++)
             {
 				if (i == cardItems.Count)
 				{
-					cardItems.Add(Instantiate(prefab, transform));
-					cardItems[i].SetCardModel(dataList[i]);
+					cardItems.Add(FindInPoolOrCreate(dataList[i]));
 				}
+				else if(cardItems[i].Card != dataList[i])
+                {
+					pool.Add(cardItems[i]);
+					cardItems.RemoveAt(i);
+                }
 
-				cardItems[i].MoveToPosition(Vector2.left * (startPoint + i * prefab.RectTransform.sizeDelta.x * 0.8f));
+				cardItems[i].MoveToPosition(Vector2.right * (startPoint + i * prefab.RectTransform.sizeDelta.x * 0.8f)
+					+ Vector2.down * 20f * (i % 2));
             }
-        }
-
-		public void MoveCard(CardItem cardItem)
-        {
-			if(cardItems.Contains(cardItem))
-            {
-				cardItems.Remove(cardItem);
-            }
-			else
-            {
-				cardItems.Add(cardItem);
-
-				cardItem.RectTransform.parent = transform;
-				cardItem.RectTransform.SetAsLastSibling();
-			}
         }
 
 		[OnDestroy]
 		public void onDestroy()
 		{
 			Model.EventManager.RemoveAction("ModelChanged", Changed);
-			Model.EventManager.RemoveAction<CardItem>("MoveCard", MoveCard);
 		}
 
+		private static List<CardItem> pool = new List<CardItem>();
 
+		private CardItem FindInPoolOrCreate(Card card)
+        {
+			var cardItem = pool.FirstOrDefault(item => item.Card == card);
+			if(cardItem == null)
+            {
+				cardItem = Instantiate(prefab, transform);
+				cardItem.SetCardModel(card);
+				return cardItem;
+			}
+			else
+            {
+				return cardItem;
+            }
+        }
 	}
 }
