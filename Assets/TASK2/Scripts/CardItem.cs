@@ -38,7 +38,7 @@ namespace Task2
         {
             Vector2 startPosition = RectTransform.anchoredPosition;
             Path.Action(() => { }).EasingLinear(
-                1f, 0f, 1f, (f) => RectTransform.anchoredPosition = Vector2.Lerp(startPosition, _position, f));
+                0.2f, 0f, 1f, (f) => RectTransform.anchoredPosition = Vector2.Lerp(startPosition, _position, f));
         }
 
         public void OnPointerClick(PointerEventData eventData)

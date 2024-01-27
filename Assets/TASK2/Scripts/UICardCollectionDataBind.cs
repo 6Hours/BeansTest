@@ -31,31 +31,33 @@ namespace Task2
 		[OnStart]
 		public void start()
 		{
-			Model.EventManager.AddAction("ModelChanged", Changed);
+			Model.EventManager.AddAction($"On{listField}Changed", Changed);
 		}
 
 		protected virtual void Changed()
 		{
 			var dataList = Model.Get<List<Card>>(listField);
 
-			if (dataList == null) return;
-
 			float startPoint = (dataList.Count - 1) * prefab.RectTransform.sizeDelta.x * -0.4f;
-			for (int i = 0; i < dataList.Count; i++)
+			for (int i = 0; i < Mathf.Max(dataList.Count, cardItems.Count); i++)
             {
 				if (i == cardItems.Count)
 				{
 					cardItems.Add(FindInPoolOrCreate(dataList[i]));
+					cardItems[i].transform.parent = transform;
+
 				}
-				else if(cardItems[i].Card != dataList[i])
+				else if(!dataList.Contains(cardItems[i].Card))
                 {
 					pool.Add(cardItems[i]);
 					cardItems.RemoveAt(i);
+					i--;
                 }
 
-				cardItems[i].MoveToPosition(Vector2.right * (startPoint + i * prefab.RectTransform.sizeDelta.x * 0.8f)
-					+ Vector2.down * 20f * (i % 2));
-            }
+				cardItems[i].MoveToPosition(
+					Vector2.right * (startPoint + i * prefab.RectTransform.sizeDelta.x * 0.8f) + 
+					Vector2.down * 20f * (i % 2));
+			}
         }
 
 		[OnDestroy]

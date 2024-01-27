@@ -16,7 +16,9 @@ namespace Task2
             int currentId = Model.Get("CardCount", 0);
 
             Model.GetList<Card>("FirstList").Add(new Card(currentId, $"cardName{currentId}", $"sprite{currentId}"));
-            
+
+            Model.EventManager.Invoke("OnFirstListChanged");
+
             Model.Inc("CardCount", 1);
 
             Parent.Change("Idle");

@@ -33,9 +33,12 @@ namespace Task2
         private void OnCardBtn(Card card)
         {
             Model.Get<List<Card>>("FirstList").Remove(card);
+
+            Model.EventManager.Invoke("OnFirstListChanged");
+
             Model.Get<List<Card>>("SecondList").Add(card);
 
-            Model.EventManager.Invoke("ModelChanged");
+            Model.EventManager.Invoke("OnSecondListChanged");
         }
     }
 }
