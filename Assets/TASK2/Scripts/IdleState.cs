@@ -39,6 +39,8 @@ namespace Task2
             Model.Get<List<Card>>("SecondList").Add(card);
 
             Model.EventManager.Invoke("OnSecondListChanged");
+
+            Model.EventManager.Invoke("OnSecondListCardInteractableChanged", card, false);
         }
     }
 }

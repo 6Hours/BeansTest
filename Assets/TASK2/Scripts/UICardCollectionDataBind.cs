@@ -32,6 +32,7 @@ namespace Task2
 		public void start()
 		{
 			Model.EventManager.AddAction($"On{listField}Changed", Changed);
+			Model.EventManager.AddAction<Card, bool>($"On{listField}CardInteractableChanged", ChangeCardInteractable);
 		}
 
 		protected virtual void Changed()
@@ -66,6 +67,7 @@ namespace Task2
 		public void onDestroy()
 		{
 			Model.EventManager.RemoveAction("ModelChanged", Changed);
+			Model.EventManager.RemoveAction<Card, bool>($"On{listField}CardInteractableChanged", ChangeCardInteractable);
 		}
 
 		private static List<CardItem> pool = new List<CardItem>();
@@ -84,5 +86,10 @@ namespace Task2
 				return cardItem;
             }
         }
+
+		private void ChangeCardInteractable(Card card, bool interactable)
+        {
+			cardItems.FirstOrDefault(item => item.Card == card)?.SetButtonInteractable(interactable);
+		}
 	}
 }

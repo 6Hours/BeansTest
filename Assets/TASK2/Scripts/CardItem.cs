@@ -1,20 +1,23 @@
 using AxGrid;
 using AxGrid.Base;
 using AxGrid.Path;
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Task2
 {
-    public class CardItem : MonoBehaviourExt, IPointerClickHandler
+    public class CardItem : MonoBehaviourExt
     {
         [SerializeField] private TMP_Text nameLable;
 
         public Card Card { get; private set; }
 
+        private Button button;
+
         private RectTransform rectTransform;
+
         public RectTransform RectTransform
         {
             get
@@ -24,6 +27,14 @@ namespace Task2
 
                 return rectTransform;
             }
+        }
+
+        [OnAwake]
+        public void awake()
+        {
+            button = GetComponent<Button>();
+
+            button.onClick.AddListener(OnClick);
         }
 
         public void SetCardModel(Card _card)
@@ -41,7 +52,12 @@ namespace Task2
                 0.2f, 0f, 1f, (f) => RectTransform.anchoredPosition = Vector2.Lerp(startPosition, _position, f));
         }
 
-        public void OnPointerClick(PointerEventData eventData)
+        public void SetButtonInteractable(bool interactable)
+        {
+            button.interactable = interactable;
+        }
+
+        private void OnClick()
         {
             Settings.Fsm?.Invoke("OnCardBtn", Card);
         }
