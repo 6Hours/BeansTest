@@ -26,14 +26,13 @@ namespace ToolsTest
             Observable.Start(() => {
                 int Factorial(int stage)
                 {
-                    if(stage > 0)
-                        return stage * Factorial(stage - 1);
+                    if(stage > 1)
+                        return Factorial(stage - 1) * stage;
                     else
                         return 1;
                 };
-                int n = 1000;
-                int res = Factorial(n);
-                return res;
+                int n = 10;
+                return Factorial(n);
             }).ObserveOnMainThread()
               .Subscribe(xs => {
                   Debug.Log("res: " + xs);
