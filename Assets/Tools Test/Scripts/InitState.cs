@@ -16,7 +16,7 @@ namespace ToolsTest
             Model.Set("RedSquare", false);
 
             Model.Set("SliderTestWholeNumbersActive", true);
-            Model.Set("SliderTestMaxValue", 5f);
+            Model.Set("SliderTestMaxValue", 10f);
 
             Model.Set("SliderValue", 2f);
 
