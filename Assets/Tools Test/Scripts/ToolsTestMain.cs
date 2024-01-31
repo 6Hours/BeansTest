@@ -3,6 +3,7 @@ using AxGrid.Base;
 using AxGrid.FSM;
 using AxGrid.Path;
 using SmartFormat;
+using UniRx;
 using UnityEngine;
 
 namespace ToolsTest
@@ -21,6 +22,22 @@ namespace ToolsTest
             Model.EventManager.AddAction("OnTestClick", OnSliderClick);
 
             Settings.Fsm.Start("Init");
+
+            Observable.Start(() => {
+                int Factorial(int stage)
+                {
+                    if(stage > 0)
+                        return stage * Factorial(stage - 1);
+                    else
+                        return 1;
+                };
+                int n = 1000;
+                int res = Factorial(n);
+                return res;
+            }).ObserveOnMainThread()
+              .Subscribe(xs => {
+                  Debug.Log("res: " + xs);
+              }).AddTo(this);
         }
 
         private void OnSliderClick()
